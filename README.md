@@ -4,7 +4,7 @@ Sistema pessoal de busca de vagas: captura e triagem de vagas, análise de merca
 
 ## Requisitos
 
-- PHP 8.3+ com `intl`, `pdo_sqlite`, `mbstring`, `bcmath`, `gd`, `zip`
+- PHP 8.4+ com `intl`, `pdo_sqlite`, `mbstring`, `bcmath`, `gd`, `zip`
 - Composer 2
 - Bun (ou Node 22 com npm)
 
