@@ -1,0 +1,8 @@
+domains:
+  - jobora-v2
+js_runtime: bun
+secured: true
+workers:
+  - queue
+  - reverb
+  - schedule

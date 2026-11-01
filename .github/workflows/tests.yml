@@ -1,0 +1,42 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  php:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: intl, sqlite3, pdo_sqlite, mbstring, bcmath, gd, zip, curl, dom, fileinfo
+          ini-values: memory_limit=-1
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          touch database/database.testing.sqlite
+
+      - name: Run test suite
+        run: php artisan test
+
+      - name: MCP server responds
+        run: |
+          printf '%s\n' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"ci","version":"1.0"}}}' \
+            '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' \
+            | timeout 30 php artisan mcp:start jobora > /tmp/mcp.out
+          grep -q '"name":"Jobora"' /tmp/mcp.out
+          grep -q 'list_job_postings' /tmp/mcp.out
